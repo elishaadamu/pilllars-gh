@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react';
-import Pillar3D from './Pillar3D';
 
 const InputField = ({ label, value, setter, icon: Icon, min = 1 }) => (
   <div className="flex flex-col space-y-2">
@@ -145,51 +144,9 @@ function App() {
                 </p>
               )}
             </div>
-
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-xl">
-              <h3 className="text-lg font-semibold text-white mb-6">Breakdown</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-2xl border border-slate-700/30">
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
-                      <Layers className="w-4 h-4" />
-                    </div>
-                    <span>Total Pieces Needed</span>
-                  </div>
-                  {isCalculating ? (
-                    <div className="h-6 w-16 bg-slate-700/50 rounded-md animate-pulse"></div>
-                  ) : (
-                    <span className="text-lg sm:text-xl font-bold text-white">{totalPieces}</span>
-                  )}
-                </div>
-
-                <div className="flex justify-center text-slate-500 py-1">
-                  <ArrowRight className="w-5 h-5 rotate-90" />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-2xl border border-slate-700/30">
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
-                      <Settings className="w-4 h-4" />
-                    </div>
-                    <span>Pieces per Rod</span>
-                  </div>
-                  {isCalculating ? (
-                    <div className="h-6 w-16 bg-slate-700/50 rounded-md animate-pulse"></div>
-                  ) : (
-                    <span className="text-lg sm:text-xl font-bold text-white text-right">
-                      {piecesPerRod > 0 ? piecesPerRod : (activeValues.rodLength > 0 ? 'Rod too short' : '0')}
-                    </span>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>
-
-        {/* 3D Visualization */}
-        <Pillar3D rodsPerPillar={activeValues.rodsPerPillar} pillarLength={activeValues.pillarLength} isCalculating={isCalculating} />
       </div>
 
       {/* Tutorial Drawer */}
