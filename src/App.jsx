@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb, ChevronDown, ChevronUp, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react';
 import Pillar3D from './Pillar3D';
 
 const InputField = ({ label, value, setter, icon: Icon, min = 1 }) => (
@@ -29,6 +29,15 @@ function App() {
   const [pillarLength, setPillarLength] = useState(14);
   const [rodsPerPillar, setRodsPerPillar] = useState(8);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  useEffect(() => {
+    setIsCalculating(true);
+    const timer = setTimeout(() => {
+      setIsCalculating(false);
+    }, 400); // 400ms skeleton delay
+    return () => clearTimeout(timer);
+  }, [numPillars, rodLength, pillarLength, rodsPerPillar]);
 
   // Calculations
   const totalPieces = (numPillars || 0) * (rodsPerPillar || 0);
@@ -103,11 +112,18 @@ function App() {
                 <Calculator className="w-32 h-32 transform rotate-12" />
               </div>
               <h2 className="text-emerald-100 font-medium text-lg mb-2 relative z-10">Total Rods Needed</h2>
-              <div className="flex items-end gap-2 relative z-10">
-                <span className="text-5xl sm:text-6xl font-black tracking-tight">{Math.ceil(totalRods)}</span>
-                <span className="text-emerald-100 mb-2 font-medium">rods</span>
-              </div>
-              {totalRods % 1 !== 0 && (
+              {isCalculating ? (
+                <div className="flex items-center gap-4 relative z-10 h-16 mt-2">
+                  <div className="h-12 w-24 bg-emerald-100/20 rounded-xl animate-pulse"></div>
+                  <div className="h-6 w-12 bg-emerald-100/20 rounded-md animate-pulse"></div>
+                </div>
+              ) : (
+                <div className="flex items-end gap-2 relative z-10 h-16 mt-2">
+                  <span className="text-5xl sm:text-6xl font-black tracking-tight">{Math.ceil(totalRods)}</span>
+                  <span className="text-emerald-100 mb-2 font-medium">rods</span>
+                </div>
+              )}
+              {totalRods % 1 !== 0 && !isCalculating && (
                 <p className="text-emerald-100/80 text-sm mt-2 relative z-10">
                   Exact calculation: {totalRods.toFixed(2)} rods
                 </p>
@@ -125,7 +141,11 @@ function App() {
                     </div>
                     <span>Total Pieces Needed</span>
                   </div>
-                  <span className="text-lg sm:text-xl font-bold text-white">{totalPieces}</span>
+                  {isCalculating ? (
+                    <div className="h-6 w-16 bg-slate-700/50 rounded-md animate-pulse"></div>
+                  ) : (
+                    <span className="text-lg sm:text-xl font-bold text-white">{totalPieces}</span>
+                  )}
                 </div>
 
                 <div className="flex justify-center text-slate-500 py-1">
@@ -139,9 +159,13 @@ function App() {
                     </div>
                     <span>Pieces per Rod</span>
                   </div>
-                  <span className="text-lg sm:text-xl font-bold text-white text-right">
-                    {piecesPerRod > 0 ? piecesPerRod : (rodLength > 0 ? 'Rod too short' : '0')}
-                  </span>
+                  {isCalculating ? (
+                    <div className="h-6 w-16 bg-slate-700/50 rounded-md animate-pulse"></div>
+                  ) : (
+                    <span className="text-lg sm:text-xl font-bold text-white text-right">
+                      {piecesPerRod > 0 ? piecesPerRod : (rodLength > 0 ? 'Rod too short' : '0')}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -149,7 +173,7 @@ function App() {
         </div>
 
         {/* 3D Visualization */}
-        <Pillar3D rodsPerPillar={rodsPerPillar} pillarLength={pillarLength} />
+        <Pillar3D rodsPerPillar={rodsPerPillar} pillarLength={pillarLength} isCalculating={isCalculating} />
       </div>
 
       {/* Tutorial Drawer */}

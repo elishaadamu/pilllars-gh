@@ -69,9 +69,18 @@ function Pillar({ rodsPerPillar, pillarLength }) {
   );
 }
 
-export default function Pillar3D({ rodsPerPillar, pillarLength }) {
+export default function Pillar3D({ rodsPerPillar, pillarLength, isCalculating }) {
   return (
     <div className="w-full h-80 md:h-[400px] bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-700/50 overflow-hidden relative shadow-xl">
+      
+      {/* Loading Overlay */}
+      {isCalculating && (
+        <div className="absolute inset-0 z-20 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300">
+          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+          <span className="text-emerald-400 font-medium text-sm animate-pulse">Updating 3D Model...</span>
+        </div>
+      )}
+
       <div className="absolute top-6 left-6 z-10 pointer-events-none">
         <h3 className="text-emerald-400 font-semibold text-sm tracking-wider uppercase">Interactive 3D View</h3>
         <p className="text-slate-400 text-xs mt-1 hidden sm:block">Drag to rotate • Scroll to zoom</p>
