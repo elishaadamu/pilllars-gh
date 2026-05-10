@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb } from 'lucide-react';
+import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb, ChevronDown, ChevronUp, X } from 'lucide-react';
+import Pillar3D from './Pillar3D';
 
 const InputField = ({ label, value, setter, icon: Icon, min = 1 }) => (
   <div className="flex flex-col space-y-2">
@@ -27,6 +28,7 @@ function App() {
   const [rodLength, setRodLength] = useState(28);
   const [pillarLength, setPillarLength] = useState(14);
   const [rodsPerPillar, setRodsPerPillar] = useState(8);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Calculations
   const totalPieces = (numPillars || 0) * (rodsPerPillar || 0);
@@ -34,8 +36,20 @@ function App() {
   const totalRods = piecesPerRod > 0 ? totalPieces / piecesPerRod : 0;
 
   return (
-    <div className="min-h-screen py-12 px-4 md:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 font-sans">
-      <div className="max-w-4xl mx-auto space-y-12">
+    <div className="min-h-screen py-12 px-4 md:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 font-sans relative overflow-x-hidden">
+      
+      {/* Top Left Tutorial Button */}
+      <div className="absolute top-4 left-4 md:top-8 md:left-8 z-40">
+        <button 
+          onClick={() => setShowTutorial(true)}
+          className="flex items-center gap-2 text-emerald-400 hover:text-white font-medium bg-emerald-500/10 hover:bg-emerald-500/30 px-5 py-2.5 rounded-full transition-all border border-emerald-500/20 backdrop-blur-md shadow-lg"
+        >
+          <BookOpen className="w-5 h-5" />
+          <span className="hidden sm:inline">Tutorial & Tips</span>
+        </button>
+      </div>
+
+      <div className="max-w-4xl mx-auto space-y-12 mt-8 md:mt-0">
         
         {/* Calculator Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -126,7 +140,7 @@ function App() {
                     <span>Pieces per Rod</span>
                   </div>
                   <span className="text-lg sm:text-xl font-bold text-white text-right">
-                    {piecesPerRod > 0 ? piecesPerRod : 'Invalid Lengths'}
+                    {piecesPerRod > 0 ? piecesPerRod : (rodLength > 0 ? 'Rod too short' : '0')}
                   </span>
                 </div>
               </div>
@@ -134,49 +148,69 @@ function App() {
           </div>
         </div>
 
-        {/* Details & Tutorial Section */}
-        <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-3xl p-6 md:p-10 text-slate-300 shadow-xl space-y-8">
-          <div className="flex items-center gap-3 border-b border-slate-700/50 pb-4">
-            <BookOpen className="w-7 h-7 text-emerald-400" />
-            <h2 className="text-2xl font-bold text-white tracking-tight">How it Works</h2>
-          </div>
+        {/* 3D Visualization */}
+        <Pillar3D rodsPerPillar={rodsPerPillar} pillarLength={pillarLength} />
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Info className="w-5 h-5 text-emerald-500" />
-                The Calculation
-              </h3>
-              <p className="leading-relaxed text-sm text-slate-400">
-                This tool determines exactly how many full lengths of steel rods you need to buy to construct your concrete pillars. It computes the total pieces required, and mathematically slices your available rod lengths to minimize waste.
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm text-slate-400">
-                <li><strong>Total Pieces:</strong> Number of pillars × rods per pillar.</li>
-                <li><strong>Pieces per Rod:</strong> Derived by dividing your total Rod Length by your desired Pillar Length.</li>
-                <li><strong>Total Rods:</strong> Total Pieces ÷ Pieces per Rod.</li>
-              </ul>
+      {/* Tutorial Drawer */}
+      {showTutorial && (
+        <div className="fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowTutorial(false)}
+          ></div>
+          
+          {/* Drawer Sliding from Left */}
+          <div className="relative w-full max-w-md h-full bg-slate-900/95 backdrop-blur-xl border-r border-slate-700/50 p-6 md:p-8 shadow-2xl overflow-y-auto animate-slide-in-left">
+            <button 
+              onClick={() => setShowTutorial(false)}
+              className="absolute top-6 right-6 text-slate-400 hover:text-white bg-slate-800/50 p-2 rounded-full transition-all"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-slate-700/50 pb-4 mt-2">
+              <BookOpen className="w-7 h-7 text-emerald-400" />
+              <h2 className="text-2xl font-bold text-white tracking-tight">How it Works</h2>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-yellow-400" />
-                Pro Tips
-              </h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-700/30">
-                  <span className="text-xl">📏</span>
-                  <span className="text-slate-400">Standard steel rods are usually <strong>30ft or 40ft long</strong>. Be sure to verify the standard length at your local building materials market before calculating.</span>
-                </li>
-                <li className="flex gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-700/30">
-                  <span className="text-xl">⚠️</span>
-                  <span className="text-slate-400">Always buy an extra <strong>5% to 10%</strong> to account for overlap joints (lapping) and cutting wastage.</span>
-                </li>
-              </ul>
+            <div className="space-y-8 mt-8">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Info className="w-5 h-5 text-emerald-500" />
+                  The Calculation
+                </h3>
+                <p className="leading-relaxed text-sm text-slate-400">
+                  This tool determines exactly how many full lengths of steel rods you need to buy to construct your concrete pillars. It computes the total pieces required, and mathematically slices your available rod lengths to minimize waste.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 text-sm text-slate-400">
+                  <li><strong>Total Pieces:</strong> Number of pillars × rods per pillar.</li>
+                  <li><strong>Pieces per Rod:</strong> Derived by dividing your total Rod Length by your desired Pillar Length.</li>
+                  <li><strong>Total Rods:</strong> Total Pieces ÷ Pieces per Rod.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-yellow-400" />
+                  Pro Tips
+                </h3>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-700/30">
+                    <span className="text-xl">📏</span>
+                    <span className="text-slate-400">Standard steel rods are usually <strong>30ft or 40ft long</strong>. Be sure to verify the standard length at your local building materials market before calculating.</span>
+                  </li>
+                  <li className="flex gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-700/30">
+                    <span className="text-xl">⚠️</span>
+                    <span className="text-slate-400">Always buy an extra <strong>5% to 10%</strong> to account for overlap joints (lapping) and cutting wastage.</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }
