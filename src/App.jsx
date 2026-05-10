@@ -64,13 +64,13 @@ function App() {
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-12 mt-8 md:mt-0">
+      <div className="max-w-lg mx-auto space-y-8 mt-8 md:mt-0 w-full">
         
-        {/* Calculator Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Calculator Container */}
+        <div className="flex flex-col gap-6">
           
           {/* Left Side: Inputs */}
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl flex flex-col justify-between">
             <div className="flex items-center gap-4 mb-8">
               <div className="p-3 bg-emerald-500/20 rounded-2xl">
                 <Calculator className="w-8 h-8 text-emerald-400" />
@@ -120,30 +120,29 @@ function App() {
             </div>
           </div>
 
-          {/* Right Side: Results */}
-          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 shadow-xl shadow-emerald-900/20 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                <Calculator className="w-32 h-32 transform rotate-12" />
+          {/* Results */}
+          <div>
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl py-5 px-8 shadow-xl shadow-emerald-900/20 text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+                <Calculator className="w-24 h-24 transform rotate-12" />
               </div>
-              <h2 className="text-emerald-100 font-medium text-lg mb-2 relative z-10">Total Rods Needed</h2>
+              <h2 className="text-emerald-100 font-medium text-base mb-1 relative z-10">Total Rods Needed</h2>
               {isCalculating ? (
-                <div className="flex items-center gap-4 relative z-10 h-16 mt-2">
-                  <div className="h-12 w-24 bg-emerald-100/20 rounded-xl animate-pulse"></div>
-                  <div className="h-6 w-12 bg-emerald-100/20 rounded-md animate-pulse"></div>
+                <div className="flex items-center gap-4 relative z-10 h-12 mt-1">
+                  <div className="h-10 w-24 bg-emerald-100/20 rounded-xl animate-pulse"></div>
+                  <div className="h-5 w-12 bg-emerald-100/20 rounded-md animate-pulse"></div>
                 </div>
               ) : (
-                <div className="flex items-end gap-2 relative z-10 h-16 mt-2">
-                  <span className="text-5xl sm:text-6xl font-black tracking-tight">{Math.ceil(totalRods)}</span>
-                  <span className="text-emerald-100 mb-2 font-medium">rods</span>
+                <div className="flex items-end gap-2 relative z-10 h-12 mt-1">
+                  <span className="text-4xl sm:text-5xl font-black tracking-tight">{Math.ceil(totalRods)}</span>
+                  <span className="text-emerald-100 mb-1 font-medium text-sm">rods</span>
                 </div>
               )}
               {totalRods % 1 !== 0 && !isCalculating && (
-                <p className="text-emerald-100/80 text-sm mt-2 relative z-10">
-                  Exact calculation: {totalRods.toFixed(2)} rods
+                <p className="text-emerald-100/80 text-xs mt-1 relative z-10">
+                  Exact: {totalRods.toFixed(2)} rods
                 </p>
               )}
-            </div>
             </div>
           </div>
         </div>
