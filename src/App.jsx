@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calculator, Ruler, Layers, Settings, ArrowRight, BookOpen, Info, Lightbulb, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react';
 import Pillar3D from './Pillar3D';
 
@@ -30,18 +30,25 @@ function App() {
   const [rodsPerPillar, setRodsPerPillar] = useState(8);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  
+  const [activeValues, setActiveValues] = useState({
+    numPillars: 32,
+    rodLength: 28,
+    pillarLength: 14,
+    rodsPerPillar: 8
+  });
 
-  useEffect(() => {
+  const handleCalculate = () => {
     setIsCalculating(true);
-    const timer = setTimeout(() => {
+    setTimeout(() => {
+      setActiveValues({ numPillars, rodLength, pillarLength, rodsPerPillar });
       setIsCalculating(false);
-    }, 400); // 400ms skeleton delay
-    return () => clearTimeout(timer);
-  }, [numPillars, rodLength, pillarLength, rodsPerPillar]);
+    }, 600); // 600ms loading effect
+  };
 
-  // Calculations
-  const totalPieces = (numPillars || 0) * (rodsPerPillar || 0);
-  const piecesPerRod = Math.floor((rodLength || 0) / (pillarLength || 1));
+  // Calculations based on submitted values
+  const totalPieces = (activeValues.numPillars || 0) * (activeValues.rodsPerPillar || 0);
+  const piecesPerRod = Math.floor((activeValues.rodLength || 0) / (activeValues.pillarLength || 1));
   const totalRods = piecesPerRod > 0 ? totalPieces / piecesPerRod : 0;
 
   return (
@@ -77,7 +84,7 @@ function App() {
 
             <div className="space-y-6">
               <InputField 
-                label="Number of Pillars" 
+                label="Total Number of Pillars" 
                 value={numPillars} 
                 setter={setNumPillars} 
                 icon={Layers} 
@@ -102,6 +109,15 @@ function App() {
                 setter={setRodsPerPillar} 
                 icon={Settings} 
               />
+              
+              <button
+                onClick={handleCalculate}
+                disabled={isCalculating}
+                className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/50 text-slate-900 font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2"
+              >
+                {isCalculating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Calculator className="w-5 h-5" />}
+                {isCalculating ? 'Calculating...' : 'Calculate Estimate'}
+              </button>
             </div>
           </div>
 
@@ -163,7 +179,7 @@ function App() {
                     <div className="h-6 w-16 bg-slate-700/50 rounded-md animate-pulse"></div>
                   ) : (
                     <span className="text-lg sm:text-xl font-bold text-white text-right">
-                      {piecesPerRod > 0 ? piecesPerRod : (rodLength > 0 ? 'Rod too short' : '0')}
+                      {piecesPerRod > 0 ? piecesPerRod : (activeValues.rodLength > 0 ? 'Rod too short' : '0')}
                     </span>
                   )}
                 </div>
@@ -173,7 +189,7 @@ function App() {
         </div>
 
         {/* 3D Visualization */}
-        <Pillar3D rodsPerPillar={rodsPerPillar} pillarLength={pillarLength} isCalculating={isCalculating} />
+        <Pillar3D rodsPerPillar={activeValues.rodsPerPillar} pillarLength={activeValues.pillarLength} isCalculating={isCalculating} />
       </div>
 
       {/* Tutorial Drawer */}
